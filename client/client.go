@@ -13,7 +13,7 @@ import (
 	"github.com/adieumonks/raftkv/api"
 )
 
-const DebugClient = 1
+const DebugClient = 0
 
 type Client struct {
 	addrs []string

@@ -3,6 +3,7 @@ package kv
 import (
 	"context"
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -15,7 +16,7 @@ import (
 	"github.com/adieumonks/raftkv/raft"
 )
 
-const DebugKV = 1
+const DebugKV = 0
 
 type Service struct {
 	sync.Mutex
@@ -95,7 +96,7 @@ func (s *Service) ShutDown() error {
 		s.log("shutting down HTTP server")
 		ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 		defer cancel()
-		if err := s.srv.Shutdown(ctx); err != nil {
+		if err := s.srv.Shutdown(ctx); err != nil && !errors.Is(err, context.DeadlineExceeded) {
 			return err
 		}
 		s.log("HTTP shutdown complete")
